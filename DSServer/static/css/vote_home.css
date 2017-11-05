@@ -1,0 +1,154 @@
+        .introduce
+        {
+            width: 90%;
+            margin-left: 5%;
+            font-size: 1.0cm;
+            margin-top:40px;
+            text-align: center;
+            color: #666666;
+        }
+
+        .org_info
+        {
+            font-size: 1.0cm;
+            color: #666666;
+            margin-left: 20px;
+            line-height:20px;
+        }
+
+        .org_detail
+        {
+            font-size: 0.8cm;
+            color: #666666;
+            line-height:20px;
+        }
+
+        #searchContext
+        {
+            height: 80px;
+            width: 60%;
+            font-size: 1.0cm;
+            color: #808995;
+            float: left;
+            margin-left: 10px;
+            margin-top: 10px;
+            border: none;
+        }
+
+        #searchButton
+        {
+            height: 80px;
+            width: 25%;
+            float: right;
+            font-size: 1.2cm;
+            margin-top: 20px;
+            margin-right: 10px;
+            color: #666666;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+            font-family: "Microsoft YaHei";
+        }
+
+        #pinPaiList
+        {
+            width: 100%;
+        }
+
+
+        .vote_introduce
+        {
+            font-size: 2cm;
+            background-image: url('/static/Images/intro.jpg');
+            height: 100px;
+            width: 60%;
+            text-align: center;
+            background-repeat:no-repeat;
+            background-size:100% 100%;
+            -moz-background-size:100% 100%;
+            margin-left: 20%;
+            margin-top: 40px;
+            color: #ffffff;
+            padding-top: 10px;
+            font-size: 1.4cm;
+        }
+
+        /*============================================================================================*/
+
+        .template_flower
+        {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 50px;
+        }
+        .factory_class_left
+        {
+            background-color: white;
+            height: 570px;
+            width: 40%;
+            margin-left: 8%;
+            float: left;
+            text-align: center;
+            border-radius: 1.3cm;
+            margin-top: 40px;
+        }
+        .factory_class_right
+        {
+            background-color: white;
+            height: 570px;
+            width: 40%;
+            margin-right: 8%;
+            text-align: center;
+            border-radius: 1.3cm;
+            float:right;
+            margin-top: 40px;
+        }
+
+        .fact_log
+        {
+            width: 300px;
+            height: 300px;
+            margin-top: 40px;
+        }
+
+        .name_info
+        {
+            font-size: 1.2cm;
+            color: #666666;
+            text-align: left;
+            padding-left: 10%;
+        }
+        .count_info
+        {
+            font-size: 1.0cm;
+            color: #CA1701;
+            text-align: left;
+            padding-left: 10%;
+        }
+
+
+        /*======================================*/
+        .pai_hang_back
+        {
+            height: 160px;
+            border-radius: 80px;
+            width: 80%;
+            margin-left: 10%;
+            background-color: white;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+
+        .nav {
+            /*postion:relative;bottom:0px;margin:0px;float:left;width:100%;;height: 150px;margin-left: 0px;margin-right: 2px*/
+
+            width:100%;
+            height:150px;
+            margin:0 auto;
+            background:#f00;
+            position:fixed;
+            bottom:0;
+            text-align:center;
+        }

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+
+    </style>
+
+    <link rel="shortcut icon" href="/static/Icon/default.png" >
+
+    <style>
+        @import url('/static/css/vote_home.css');
+    </style>
+
+
+</head>
+
+<body style="overflow-x: hidden;text-align: center;min-height: 1000px;width: 100%;background-image: url('/static/Images/back_img.jpg');">
+    <div id="content">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/vote_home.js"> </script>
+        <script src="/static/js/md5.js"></script>
+        <script src="/static/js/jquery.blockUI.js"> </script>
+    <script src="/static/js/cookie.js"> </script>
+
+            {# 最顶端图标 #}
+            <div style="width: 100% ; height: 330px">
+                <img src="{{ main_logo }}" style="height: 330px;width: 750px">
+            </div>
+
+
+            <div style="width: 80%;background-color: #fff;margin: 0 auto;border-radius:0.7cm;text-align: center">
+                {#  活动简介  #}
+                <div class="vote_introduce">活动简介</div>
+                <div class="introduce">
+                        {{ vote_intro }}
+                </div>
+            </div>
+
+            <div style="width: 80%;background-color: #fff;margin: 0 auto;margin-top: 30px;text-align: center;height: 320px;border-radius:0.7cm">
+                {#  活动简介  #}
+                <div style="margin-top: 20px;font-size: 2cm;width: 65%;text-align: left;float: left">
+                    <p class="org_info">主办单位：<a class="org_detail">{{ZhuBanOrg}}</a></p>
+                    <p class="org_info">承办单位：<a class="org_detail">{{ChengBanOrg}}</a></p>
+                    <p class="org_info">支持单位：<a class="org_detail">{{ZhiChiOrg}}</a></p>
+                    <p class="org_info">协助单位：<a class="org_detail">{{XieZhuOrg}}</a></p>
+                </div>
+                <div style="margin-top: 20px;width: 30%;text-align: right;float: right;text-align: center;margin-right: 20px">
+                    <img src="/static/Images/hdj.png" style="width: 6cm;height: 6cm">
+                    <div style="font-size: 0.8cm">长按二维码关注</div>
+                </div>
+
+            </div>
+
+            {#   广告   #}
+            <div style="margin-top: 30px">
+                <img src="/static/Images/ad1.png" style="width: 690px;height: 50px">
+            </div>
+
+            {#   搜索   #}
+            <div style="width: 80%;background-color: #fff;margin: 0 auto;margin-top: 30px;text-align: center;height: 120px;border-radius:0.7cm">
+                <INPUT id="searchContext" type="text" value="请输入搜索内容" onfocus="javascript:if(this.value=='请输入搜索内容')this.value='';">
+                <button id="searchButton" onmouseover="this.style.backgroundColor='#98AFC7';this.style.color='white'" onmouseout="this.style.backgroundColor='';this.style.color='#666666'">搜索</button>
+            </div>
+
+
+
+
+            {#     品牌列表     #}
+            <div id="pinPaiList">
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {#   协办品牌     #}
+        <div>
+            <img src="/static/Images/xbpp.png" style="width: 590px;height: 340px;margin-bottom: 160px;margin-top: 200px">
+        </div>
+
+
+    </div>
+
+        <div class="nav">
+            <div style="width: 33%;background-color: #CA1701;height: 150px;float: left;" onclick="window.open('vote_introduce.html','_self')">
+                <img src="/static/Images/vote_info.png" style="width: 152px;height: 100px;margin-top: 20px">
+            </div>
+            <div style="width: 33%;background-color: #CA1701;height: 150px;float: left;margin-left: 0.3%" onclick="window.open('vote_number.html','_self')">
+                <img src="/static/Images/vote_number.png" style="width: 142px;height: 100px;margin-top: 20px">
+            </div>
+            <div style="width: 33%;background-color: #CA1701;height: 150px;float: right;margin-right: 0.3%" onclick="window.open('vote_expert.html','_self')">
+                <img src="/static/Images/vote_expert.png" style="width: 152px;height: 100px;margin-top: 20px">
+            </div>
+        </div>
+</body>
+</html>

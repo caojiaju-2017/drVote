@@ -1,0 +1,124 @@
+        .introduce
+        {
+            width: 90%;
+            margin-left: 5%;
+            font-size: 1.0cm;
+            margin-top:40px;
+            text-align: center;
+            color: #666666;
+        }
+
+        .org_info
+        {
+            font-size: 1.0cm;
+            color: #666666;
+            margin-left: 20px;
+            line-height:20px;
+        }
+
+        .org_detail
+        {
+            font-size: 0.8cm;
+            color: #666666;
+            line-height:20px;
+        }
+
+        #searchContext
+        {
+            height: 80px;
+            width: 60%;
+            font-size: 1.0cm;
+            color: #808995;
+            float: left;
+            margin-left: 10px;
+            margin-top: 10px;
+            border: none;
+        }
+
+        #searchButton
+        {
+            height: 80px;
+            width: 25%;
+            float: right;
+            font-size: 1.2cm;
+            margin-top: 20px;
+            margin-right: 10px;
+            color: #666666;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+            font-family: "Microsoft YaHei";
+        }
+
+        #expertList
+        {
+            width: 100%;
+            margin-top: 2cm;
+        }
+
+        /*============================================================================================*/
+
+        .template_flower
+        {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 50px;
+        }
+        .factory_class_left
+        {
+            background-color: white;
+            height: 510px;
+            width: 40%;
+            margin-left: 8%;
+            float: left;
+            text-align: center;
+            border-radius: 1.3cm;
+            margin-top: 60px;
+        }
+        .factory_class_right
+        {
+            background-color: white;
+            height: 510px;
+            width: 40%;
+            margin-right: 8%;
+            text-align: center;
+            border-radius: 1.3cm;
+            float:right;
+            margin-top: 60px;
+        }
+
+        .fact_log
+        {
+            width: 300px;
+            height: 300px;
+            margin-top: 40px;
+        }
+
+        .name_info
+        {
+            margin-top: 20px;
+            font-size: 1.2cm;
+            color: #CA1701;
+            text-align: center;
+        }
+        .expert_info
+        {
+            margin-top: 20px;
+            font-size: 0.8cm;
+            color: #666666;
+            text-align: center;
+        }
+
+
+        /*======================================*/
+        .pai_hang_back
+        {
+            height: 160px;
+            border-radius: 80px;
+            width: 80%;
+            margin-left: 10%;
+            background-color: white;
+            margin-top: 30px;
+            text-align: center;
+        }
