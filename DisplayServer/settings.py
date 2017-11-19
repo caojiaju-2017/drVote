@@ -30,7 +30,7 @@ DEBUG = True
 
 APPEND_SLASH=False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.2.119','192.168.1.104','115.159.224.102','192.168.1.209','101.200.187.182','www.sjsfu.com','www.chuweinews.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.2.119','192.168.1.104','115.159.224.102','192.168.1.209','101.200.187.182','192.168.1.101' ,'www.sjsfu.com','www.chuweinews.com']
 
 
 # Application definition
@@ -76,17 +76,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DisplayServer.wsgi.application'
 
+DATABASE_NAME = '/opt/datebase/vote.db'
+# DATABASE_NAME = 'vote.db'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'vote.db',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST':'',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'vote',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST':'101.201.121.175',
+        'PORT': '3306',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': DATABASE_NAME,
+#         'USER': '',
+#         'PASSWORD': '',
+#         'HOST':'',
+#         'PORT': '',
+#     }
+# }
 
+DATABASE_NAME = '/opt/datebase/vote.db'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 

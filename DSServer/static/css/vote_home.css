@@ -11,14 +11,14 @@
         .org_info
         {
             font-size: 1.0cm;
-            color: #666666;
+            color: #444444;
             margin-left: 20px;
             line-height:20px;
         }
 
         .org_detail
         {
-            font-size: 0.8cm;
+            font-size: 0.9cm;
             color: #666666;
             line-height:20px;
         }

@@ -28,8 +28,10 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',WebCenterApi.goHome),
     url(r'^api/vote/$', WebCenterApi.CommandDispatch),
+
     url(r'^vote_introduce.html',WebCenterApi.openIntroduce),
     url(r'^vote_expert.html',WebCenterApi.openExpet),
     url(r'^vote_number.html',WebCenterApi.openVoteNumber),
+    url(r'^shareToFriend',WebCenterApi.shareToFriend),
 
 ] + static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

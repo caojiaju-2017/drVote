@@ -2,21 +2,48 @@
  * Created by jiaju_cao on 2017/6/7.
  */
 
+var isFinishLoad = false;
+var currentPageIndex = -1;
+var currentPageSize = 10;
+var queryLock = false;
+
+var tempLate = "        <div class=\"pai_hang_back\">\n" +
+    "            <img src=\"{number_img}\" style=\"width: 140px;height: 140px;float: left;margin-left: 50px;margin-top: 10px;border-radius:70px\">\n" +
+    "            <div style=\"font-size: 1.7cm; color: #666666;float: left;margin-left: 40px;margin-top: 40px\">{number}</div>\n" +
+    "            <div style=\"float: left;margin-left: 40px;font-size: 1.3cm;color: #707070;margin-top: 40px\">{number_name}</div>\n" +
+    "            <div style=\"float: right;font-size: 0.8cm;color: crimson;margin-right: 40px;margin-top: 55px\">得票：{number_vote_count}</div>\n" +
+    "        </div>"
+
 window.onload=function()
 {
     //$.load_voteResult();
 };
 
+$(document).ready(function()
+{
+    $(window).scroll(function(){
+        var srollPos = $(window).scrollTop();
+        var documentHd = $(document).height();
+        var winHd = $(window).height() ;
+
+
+        totalheight = parseFloat($(window).height()) + parseFloat(srollPos);
+
+        if (srollPos + winHd > documentHd*0.85 && !isFinishLoad && !queryLock)
+        {
+            queryLock = true;
+             // 加载数据
+            currentPageIndex = currentPageIndex + 1;
+            $.query_vote_number();
+        }
+
+        });
+
+});
+
 
 // 自定义函数
 $.extend({
-    get_current_query:function () {
-        var rtnCmd = "/api/vote/?Command=Query_Factory&pageindex={0}&pagesize={1}&fliter={2}&sort=1";
-
-        rtnCmd = $.StringFormat(rtnCmd, 0,"10","");
-
-        return rtnCmd;
-    },
     load_voteResult: function ()
     {
         var cmdString = $.get_current_query();
@@ -125,32 +152,56 @@ $.extend({
 					return result;
 				},
 
-    vote_mydata:function (fcode) {
-        if (isEnable == 0)
-        {
-            return;
-        }
-        var rtnCmd = "/api/vote/?Command=VOTE_VOTING";
+    get_query_cmd:function () {
+        var rtnCmd = "/api/vote/?Command=Query_Vote_Number&pageindex={0}&pagesize={1}&start=5";
 
-        $.post(rtnCmd, {ucode: userCookie, fcode: fcode},
+        rtnCmd = $.StringFormat(rtnCmd, currentPageIndex,currentPageSize);
+
+        return rtnCmd;
+    },
+    query_vote_number:function (fcode) {
+        var cmdString = $.get_query_cmd();
+        // $.apply_permition(userCookie);
+        // 提取用户名
+        $.get( cmdString,
             function (data)
             {
 
+                //alert(templateTemp);
+                // 检查查询状态
                 var  ErrorId = data.ErrorId;
                 var  Result = data.Result;
-
+                var Datas = Result
                 if (ErrorId == 200)
                 {
-                    isEnable = 0;
-                    eval("$(\"#" + fcode + "\").html('得票数：" + Result + "')");
+                    if (Datas.length <= 0 || Datas.length < currentPageSize)
+                    {
+                        isFinishLoad = true;
+                    }
 
-                    alert("感谢参与!");
+                    for (i=0;i<Datas.length ;i++ )
+                    {
+                        var oneCode1 = Datas[i];
+                        var oneT = $("#pageContainer").html();
+                        if("undefined" == typeof oneT)
+                        {
+                            oneT = "";
+                        }
+
+                        var abcTemp = {};
+                        abcTemp["number_img"] = oneCode1.number_img;
+                        abcTemp["number"] = oneCode1.number;
+                        abcTemp["number_name"] = oneCode1.number_name;
+                        abcTemp["number_vote_count"] = oneCode1.number_vote_count;
+
+                        var oneT = $("#pageContainer").html();
+                        $("#pageContainer").html(oneT + $.format(tempLate,abcTemp) );
+                    }
+
+                    queryLock = false;
                 }
-
 
             },
             "json");//这里返回的类型有：json,html,xml,text
-
-
     },
 });

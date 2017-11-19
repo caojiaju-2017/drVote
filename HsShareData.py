@@ -12,7 +12,7 @@ class HsShareData:
 
     SigCode = 'af?Fzio2u'
 
-    IsDebug = False
+    IsDebug = True
     GuestAccessDict = {}
     GuestMaxAccessCount = 50
 

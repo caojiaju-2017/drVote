@@ -10,7 +10,7 @@ var isFinishLoad = false;
 var currentPageIndex = 0;
 var currentPageSize = 10;
 var fliterString = "";
-
+var queryLock = false;
 var templateTemp = '<div class="template_flower">' +
     '<div class="factory_class_left" style="visibility: { fact_display1 }">' +
     '<img src="{fact_logo1}" class="fact_log">' +
@@ -34,6 +34,11 @@ var templateTemp = '<div class="template_flower">' +
 window.onload=function()
 {
     $.validCookie();
+    //
+    // if(navigator.userAgent.match(/MicroMessenger/i))
+    // {
+    //     $('body').prepend('<div style=" overflow:hidden; width:0px; height:0; margin:0 auto; position:absolute; top:-800px;"><img src="'+ "/static/Images/weblog.png" +'"></div>')
+    // };
 };
 
 $(document).ready(function()
@@ -57,8 +62,9 @@ $(document).ready(function()
             // if(($(document).height()-range) <= totalheight  && num != maxnum) {
             //     main.append("<div style='border:1px solid tomato;margin-top:20px;color:#ac"+(num%20)+(num%20)+";height:"+elemt+"' >hello world"+srollPos+"---"+num+"</div>");
             // }
-        if (srollPos + winHd > documentHd*0.9 && !isFinishLoad)
+        if (srollPos + winHd > documentHd*0.9 && !isFinishLoad && !queryLock)
         {
+            queryLock = true;
              // 加载数据
             currentPageIndex = currentPageIndex + 1;
             $.query_vote_data();
@@ -70,7 +76,7 @@ $(document).ready(function()
     {
          currentPageIndex = 0;
          fliterString = $("#searchContext").val();
-         if (fliterString == "请输入搜索内容")
+         if (fliterString == "请输入搜索内容" || fliterString == "" || fliterString == "undefined" || fliterString == null)
          {
              fliterString = "";
          }
@@ -118,6 +124,7 @@ $.extend({
     },
     query_vote_data: function ()
     {
+        queryLock = true;
         var cmdString = $.get_current_query();
         $.apply_permition(userCookie);
         // 提取用户名
@@ -131,7 +138,7 @@ $.extend({
                 var Datas = Result.Datas
                 if (ErrorId == 200)
                 {
-                    if (Datas.length <= 0)
+                    if (Datas.length <= 0 || Datas.length < currentPageSize)
                     {
                         isFinishLoad = true;
                     }
@@ -195,6 +202,7 @@ $.extend({
                         //     alert( "dfdsfs" );
                         // });
                     }
+                    queryLock = false;
                 }
 
             },

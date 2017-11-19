@@ -1,0 +1,221 @@
+System check identified some issues:
+
+WARNINGS:
+?: (1_8.W001) The standalone TEMPLATE_* settings were deprecated in Django 1.8 and the TEMPLATES dictionary takes precedence. You must put the values of the following settings into your default TEMPLATES dict: TEMPLATE_DIRS.
+
+System check identified 1 issue (0 silenced).
+Invalid HTTP_HOST header: '101.201.121.175:8081'. You may need to add u'101.201.121.175' to ALLOWED_HOSTS.
+[11/Nov/2017 00:56:12] "GET / HTTP/1.1" 400 61174
+Invalid HTTP_HOST header: '101.201.121.175:8081'. You may need to add u'101.201.121.175' to ALLOWED_HOSTS.
+[11/Nov/2017 00:56:12] "GET /favicon.ico HTTP/1.1" 400 61258
+Invalid HTTP_HOST header: 'www.baidu.com'. You may need to add u'www.baidu.com' to ALLOWED_HOSTS.
+[11/Nov/2017 00:56:50] "GET http://www.baidu.com/cache/global/img/gs.gif HTTP/1.1" 400 60625
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/lib64/python2.7/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/usr/lib64/python2.7/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/lib64/python2.7/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib64/python2.7/site-packages/django/views/decorators/csrf.py", line 58, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/root/toupiao/DSServer/Api/WebCenterApi.py", line 658, in goHome
+    img = qrcode.make(url)
+  File "/usr/lib/python2.7/site-packages/qrcode/main.py", line 11, in make
+    return qr.make_image()
+  File "/usr/lib/python2.7/site-packages/qrcode/main.py", line 271, in make_image
+    from qrcode.image.pil import PilImage
+  File "/usr/lib/python2.7/site-packages/qrcode/image/pil.py", line 8, in <module>
+    import Image
+ImportError: No module named Image
+[11/Nov/2017 00:57:05] "GET / HTTP/1.1" 500 84294
+Not Found: /favicon.ico
+[11/Nov/2017 00:57:05] "GET /favicon.ico HTTP/1.1" 404 2673
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/lib64/python2.7/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/usr/lib64/python2.7/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/lib64/python2.7/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib64/python2.7/site-packages/django/views/decorators/csrf.py", line 58, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/root/toupiao/DSServer/Api/WebCenterApi.py", line 658, in goHome
+    img = qrcode.make(url)
+  File "/usr/lib/python2.7/site-packages/qrcode/main.py", line 11, in make
+    return qr.make_image()
+  File "/usr/lib/python2.7/site-packages/qrcode/main.py", line 271, in make_image
+    from qrcode.image.pil import PilImage
+  File "/usr/lib/python2.7/site-packages/qrcode/image/pil.py", line 8, in <module>
+    import Image
+ImportError: No module named Image
+[11/Nov/2017 00:58:03] "GET / HTTP/1.1" 500 84294
+[11/Nov/2017 00:59:21] "GET / HTTP/1.1" 200 594
+[11/Nov/2017 00:59:21] "GET /static/css/homecss.css HTTP/1.1" 404 1768
+[11/Nov/2017 00:59:21] "GET /static/Images/erweima_img.png HTTP/1.1" 200 687
+[11/Nov/2017 00:59:22] "GET /static/Images/back_img.jpg HTTP/1.1" 200 56130
+[11/Nov/2017 00:59:22] "GET /static/Icon/default.png HTTP/1.1" 200 50946
+[11/Nov/2017 00:59:58] "GET / HTTP/1.1" 200 4559
+[11/Nov/2017 00:59:58] "GET /api/vote/?Command=Query_UserInfo&cookie=ZJ4GihR6 HTTP/1.1" 200 70
+[11/Nov/2017 00:59:58] "GET /api/vote/?Command=Query_Factory&pageindex=0&pagesize=10&fliter= HTTP/1.1" 200 2032
+[11/Nov/2017 00:59:59] "GET /static/factory/8f0b96b2c2b611e7bd3f00163e00039a.jpg HTTP/1.1" 200 7739
+[11/Nov/2017 00:59:59] "GET /static/factory/870319b8c2b611e78ad800163e00039a.jpg HTTP/1.1" 200 19053
+[11/Nov/2017 00:59:59] "GET /static/factory/b3b5226cc2b611e7afaa00163e00039a.jpg HTTP/1.1" 200 10080
+[11/Nov/2017 00:59:59] "GET /static/factory/9397668ec2b611e7a7db00163e00039a.jpg HTTP/1.1" 200 13897
+[11/Nov/2017 00:59:59] "GET /static/factory/bcf63baec2b611e7bb3700163e00039a.jpg HTTP/1.1" 200 9848
+[11/Nov/2017 00:59:59] "GET /static/factory/c3fec1d2c2b611e7a04000163e00039a.jpg HTTP/1.1" 200 9148
+[11/Nov/2017 00:59:59] "GET /static/factory/c959e63ec2b611e78a9d00163e00039a.jpg HTTP/1.1" 200 15134
+[11/Nov/2017 00:59:59] "GET /static/factory/9ef51ae4c2b611e7b0dc00163e00039a.jpg HTTP/1.1" 200 10458
+[11/Nov/2017 00:59:59] "GET /static/factory/cfb90a3cc2b611e791ff00163e00039a.jpg HTTP/1.1" 200 10711
+[11/Nov/2017 00:59:59] "GET /static/factory/d70638d2c2b611e7a7d600163e00039a.jpg HTTP/1.1" 200 16613
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=1&pagesize=10&fliter= HTTP/1.1" 200 2013
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_UserInfo&cookie=ZJ4GihR6 HTTP/1.1" 200 70
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=2&pagesize=10&fliter= HTTP/1.1" 200 2019
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=3&pagesize=10&fliter= HTTP/1.1" 200 2019
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=4&pagesize=10&fliter= HTTP/1.1" 200 2045
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=5&pagesize=10&fliter= HTTP/1.1" 200 2031
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=7&pagesize=10&fliter= HTTP/1.1" 200 2019
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=6&pagesize=10&fliter= HTTP/1.1" 200 2034
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=8&pagesize=10&fliter= HTTP/1.1" 200 2025
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=9&pagesize=10&fliter= HTTP/1.1" 200 2025
+[11/Nov/2017 01:00:03] "GET /static/factory/9de799bec2b711e7bbb100163e00039a.jpg HTTP/1.1" 200 8969
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=10&pagesize=10&fliter= HTTP/1.1" 200 2019
+[11/Nov/2017 01:00:03] "GET /api/vote/?Command=Query_Factory&pageindex=11&pagesize=10&fliter= HTTP/1.1" 200 1064
+[11/Nov/2017 01:00:03] "GET /static/factory/dde1f844c2b611e79d4d00163e00039a.jpg HTTP/1.1" 200 10967
+[11/Nov/2017 01:00:03] "GET /static/factory/e7813b80c2b611e7ad6700163e00039a.jpg HTTP/1.1" 200 23966
+[11/Nov/2017 01:00:03] "GET /static/factory/0045bb00c2b711e790b900163e00039a.jpg HTTP/1.1" 200 4273
+[11/Nov/2017 01:00:03] "GET /static/factory/f0cd8130c2b611e7b70d00163e00039a.jpg HTTP/1.1" 200 18764
+[11/Nov/2017 01:00:04] "GET /static/factory/fa8b1f20c2b611e7a3e800163e00039a.jpg HTTP/1.1" 200 18344
+[11/Nov/2017 01:00:04] "GET /static/factory/0ae78f84c2b711e7b9c400163e00039a.jpg HTTP/1.1" 200 9273
+[11/Nov/2017 01:00:04] "GET /static/factory/15f6089cc2b711e7a02500163e00039a.jpg HTTP/1.1" 200 9749
+[11/Nov/2017 01:00:04] "GET /static/factory/10494af8c2b711e78e2100163e00039a.jpg HTTP/1.1" 200 8949
+[11/Nov/2017 01:00:04] "GET /static/factory/1c2c67e2c2b711e7ae0000163e00039a.jpg HTTP/1.1" 200 15482
+[11/Nov/2017 01:00:04] "GET /static/factory/213ac260c2b711e7bc0100163e00039a.jpg HTTP/1.1" 200 22020
+[11/Nov/2017 01:00:04] "GET /static/factory/6853bf80c2b711e795ab00163e00039a.jpg HTTP/1.1" 200 20423
+[11/Nov/2017 01:00:04] "GET /static/factory/6f93fd82c2b711e7904800163e00039a.jpg HTTP/1.1" 200 13198
+[11/Nov/2017 01:00:04] "GET /static/factory/762d1ffcc2b711e7aece00163e00039a.jpg HTTP/1.1" 200 19022
+[11/Nov/2017 01:00:04] "GET /static/factory/7c2ef7b8c2b711e7815100163e00039a.jpg HTTP/1.1" 200 10789
+[11/Nov/2017 01:00:04] "GET /static/factory/81da59d2c2b711e7879e00163e00039a.jpg HTTP/1.1" 200 8525
+[11/Nov/2017 01:00:04] "GET /static/factory/8c17e16cc2b711e7a7b700163e00039a.jpg HTTP/1.1" 200 22379
+[11/Nov/2017 01:00:04] "GET /static/factory/9113c870c2b711e7ba6400163e00039a.jpg HTTP/1.1" 200 6838
+[11/Nov/2017 01:00:04] "GET /static/factory/979f34aec2b711e7afd600163e00039a.jpg HTTP/1.1" 200 24877
+[11/Nov/2017 01:00:04] "GET /static/factory/e2070a34c2b811e7902a00163e00039a.jpg HTTP/1.1" 200 10246
+[11/Nov/2017 01:00:04] "GET /static/factory/a332b264c2b711e7b3ff00163e00039a.jpg HTTP/1.1" 200 5855
+[11/Nov/2017 01:00:04] "GET /static/factory/2fdfbb9ac2b711e79a8c00163e00039a.jpg HTTP/1.1" 200 21616
+[11/Nov/2017 01:00:05] "GET /static/factory/35bf7776c2b711e795cb00163e00039a.jpg HTTP/1.1" 200 10334
+[11/Nov/2017 01:00:05] "GET /static/factory/4d241622c2b911e7bcfb00163e00039a.jpg HTTP/1.1" 200 6801
+[11/Nov/2017 01:00:05] "GET /static/factory/3ce763e2c2b711e7a06c00163e00039a.jpg HTTP/1.1" 200 12682
+[11/Nov/2017 01:00:05] "GET / HTTP/1.1" 200 4559
+[11/Nov/2017 01:00:05] "GET /static/factory/5b7989b4c2b911e79ed000163e00039a.jpg HTTP/1.1" 200 10874
+[11/Nov/2017 01:00:05] "GET /static/factory/4328ad88c2b711e7ae5a00163e00039a.jpg HTTP/1.1" 200 26955
+[11/Nov/2017 01:00:05] "GET /static/js/jquery.min.js HTTP/1.1" 200 95786
+[11/Nov/2017 01:00:05] "GET /static/factory/48d8f7cec2b711e78d7900163e00039a.jpg HTTP/1.1" 200 13824
+[11/Nov/2017 01:00:05] "GET /static/factory/4f532598c2b711e7911a00163e00039a.jpg HTTP/1.1" 200 10789
+[11/Nov/2017 01:00:05] "GET /static/factory/555e8b58c2b711e7844800163e00039a.jpg HTTP/1.1" 200 8707
+[11/Nov/2017 01:00:05] "GET /static/factory/62820f26c2b711e7a4ca00163e00039a.jpg HTTP/1.1" 200 15027
+[11/Nov/2017 01:00:05] "GET /static/factory/5ceb780ec2b711e792c500163e00039a.jpg HTTP/1.1" 200 72198
+[11/Nov/2017 01:00:05] "GET /static/factory/285c0950c2b711e79aa300163e00039a.jpg HTTP/1.1" 200 33777
+[11/Nov/2017 01:00:06] "GET /static/factory/abc52d30c2b711e7a96f00163e00039a.jpg HTTP/1.1" 200 9459
+[11/Nov/2017 01:00:06] "GET /static/factory/b5e6460ac2b711e7a58300163e00039a.jpg HTTP/1.1" 200 25567
+[11/Nov/2017 01:00:06] "GET /static/factory/bed5e040c2b711e7a79500163e00039a.jpg HTTP/1.1" 200 21333
+[11/Nov/2017 01:00:06] "GET /static/factory/c7da3092c2b711e7993d00163e00039a.jpg HTTP/1.1" 200 24645
+[11/Nov/2017 01:00:06] "GET /static/factory/cd6313a8c2b711e7aacb00163e00039a.jpg HTTP/1.1" 200 5334
+[11/Nov/2017 01:00:06] "GET /static/factory/d31f9424c2b711e78bc700163e00039a.jpg HTTP/1.1" 200 11705
+[11/Nov/2017 01:00:06] "GET /static/factory/d9ce3b36c2b711e793b700163e00039a.jpg HTTP/1.1" 200 29701
+[11/Nov/2017 01:00:06] "GET /static/factory/e17d4d86c2b711e7a9b200163e00039a.jpg HTTP/1.1" 200 42860
+[11/Nov/2017 01:00:06] "GET /static/factory/edc967c8c2b711e78c8200163e00039a.jpg HTTP/1.1" 200 6742
+[11/Nov/2017 01:00:06] "GET /static/factory/fb9796a4c2b711e7970500163e00039a.jpg HTTP/1.1" 200 6643
+[11/Nov/2017 01:00:06] "GET /static/factory/07bae08ac2b811e79c8b00163e00039a.jpg HTTP/1.1" 200 17557
+[11/Nov/2017 01:00:06] "GET /static/factory/f4d361fec2b711e79a8f00163e00039a.jpg HTTP/1.1" 200 3068
+[11/Nov/2017 01:00:06] "GET /static/factory/0f959e26c2b811e7833000163e00039a.jpg HTTP/1.1" 200 9214
+[11/Nov/2017 01:00:06] "GET /static/factory/209d87f6c2b811e7a2f400163e00039a.jpg HTTP/1.1" 200 7494
+[11/Nov/2017 01:00:06] "GET /static/js/vote_home.js HTTP/1.1" 200 10236
+[11/Nov/2017 01:00:06] "GET /static/factory/3a008ccac2b811e7903400163e00039a.jpg HTTP/1.1" 200 24867
+[11/Nov/2017 01:00:06] "GET /static/factory/2f800906c2b811e7a4c800163e00039a.jpg HTTP/1.1" 200 15685
+[11/Nov/2017 01:00:06] "GET /static/factory/011446eac2b811e7aa4e00163e00039a.jpg HTTP/1.1" 200 19813
+[11/Nov/2017 01:00:06] "GET /static/factory/400334a6c2b811e781d300163e00039a.jpg HTTP/1.1" 200 15208
+[11/Nov/2017 01:00:06] "GET /static/factory/45586d4ac2b811e7840b00163e00039a.jpg HTTP/1.1" 200 4820
+[11/Nov/2017 01:00:06] "GET /static/factory/9415a9f2c2b811e7b90500163e00039a.jpg HTTP/1.1" 200 13328
+[11/Nov/2017 01:00:06] "GET /static/factory/2942bcb4c2b811e7bd7d00163e00039a.jpg HTTP/1.1" 200 4630
+[11/Nov/2017 01:00:06] "GET /static/js/md5.js HTTP/1.1" 200 8436
+[11/Nov/2017 01:00:06] "GET /static/factory/a8810904c2b811e7b76400163e00039a.jpg HTTP/1.1" 200 9770
+[11/Nov/2017 01:00:06] "GET /static/factory/af2331a6c2b811e78bf300163e00039a.jpg HTTP/1.1" 200 12916
+[11/Nov/2017 01:00:06] "GET /static/factory/b53f3436c2b811e79d4800163e00039a.jpg HTTP/1.1" 200 9697
+[11/Nov/2017 01:00:06] "GET /static/factory/bc262232c2b811e7971000163e00039a.jpg HTTP/1.1" 200 5969
+[11/Nov/2017 01:00:06] "GET /static/js/jquery.blockUI.js HTTP/1.1" 200 19965
+[11/Nov/2017 01:00:07] "GET /static/factory/c1b39efac2b811e7961c00163e00039a.jpg HTTP/1.1" 200 7863
+[11/Nov/2017 01:00:07] "GET /static/factory/d19f4166c2b811e7a7ce00163e00039a.jpg HTTP/1.1" 200 8564
+[11/Nov/2017 01:00:07] "GET /static/factory/cabdcc6ec2b811e7996700163e00039a.jpg HTTP/1.1" 200 23153
+[11/Nov/2017 01:00:07] "GET /static/factory/d7681596c2b811e7a5e500163e00039a.jpg HTTP/1.1" 200 13636
+[11/Nov/2017 01:00:07] "GET /static/factory/51cbe21ec2b811e7827400163e00039a.jpg HTTP/1.1" 200 9635
+[11/Nov/2017 01:00:07] "GET /static/factory/4bd5a980c2b811e7aed700163e00039a.jpg HTTP/1.1" 200 5226
+[11/Nov/2017 01:00:07] "GET /static/factory/dce7848ec2b811e7a64f00163e00039a.jpg HTTP/1.1" 200 27162
+[11/Nov/2017 01:00:07] "GET /static/factory/5da7d926c2b811e7ad7900163e00039a.jpg HTTP/1.1" 200 8486
+[11/Nov/2017 01:00:07] "GET /static/js/cookie.js HTTP/1.1" 200 3973
+[11/Nov/2017 01:00:07] "GET /static/factory/588c3d4cc2b811e7869a00163e00039a.jpg HTTP/1.1" 200 28186
+[11/Nov/2017 01:00:07] "GET /static/factory/69b0f748c2b811e7a9cf00163e00039a.jpg HTTP/1.1" 200 12400
+[11/Nov/2017 01:00:07] "GET /static/factory/63ffdfb2c2b811e7831400163e00039a.jpg HTTP/1.1" 200 24488
+[11/Nov/2017 01:00:07] "GET /static/factory/7127cacec2b811e7907d00163e00039a.jpg HTTP/1.1" 200 23506
+[11/Nov/2017 01:00:07] "GET /static/factory/79042c4cc2b811e7bb9600163e00039a.jpg HTTP/1.1" 200 20544
+[11/Nov/2017 01:00:07] "GET /static/factory/8207c9e8c2b811e7910700163e00039a.jpg HTTP/1.1" 200 20618
+[11/Nov/2017 01:00:07] "GET /static/factory/8a4db4e6c2b811e7b83a00163e00039a.jpg HTTP/1.1" 200 18413
+[11/Nov/2017 01:00:07] "GET /static/factory/f162a894c2b811e7ba6400163e00039a.jpg HTTP/1.1" 200 12560
+[11/Nov/2017 01:00:07] "GET /static/factory/f66ba93ac2b811e7a15c00163e00039a.jpg HTTP/1.1" 200 7578
+[11/Nov/2017 01:00:07] "GET /static/factory/1868e642c2b911e7b99700163e00039a.jpg HTTP/1.1" 200 8706
+[11/Nov/2017 01:00:07] "GET /static/factory/1de4d874c2b911e797b900163e00039a.jpg HTTP/1.1" 200 15299
+[11/Nov/2017 01:00:07] "GET /static/factory/27f1a3f6c2b911e7960800163e00039a.jpg HTTP/1.1" 200 9095
+[11/Nov/2017 01:00:07] "GET /static/factory/22d88c5ec2b911e7a5f600163e00039a.jpg HTTP/1.1" 200 32351
+[11/Nov/2017 01:00:07] "GET /static/factory/2cda3c16c2b911e7b3a500163e00039a.jpg HTTP/1.1" 200 7965
+[11/Nov/2017 01:00:07] "GET /static/factory/3216433cc2b911e78c4900163e00039a.jpg HTTP/1.1" 200 17948
+[11/Nov/2017 01:00:07] "GET /static/factory/380e2d5ec2b911e7863200163e00039a.jpg HTTP/1.1" 200 15366
+[11/Nov/2017 01:00:07] "GET /static/factory/3dc89e1ec2b911e7850600163e00039a.jpg HTTP/1.1" 200 14244
+[11/Nov/2017 01:00:07] "GET /static/factory/42808570c2b911e7b53a00163e00039a.jpg HTTP/1.1" 200 6947
+[11/Nov/2017 01:00:07] "GET /static/factory/48009030c2b911e7b7e600163e00039a.jpg HTTP/1.1" 200 2807
+[11/Nov/2017 01:00:08] "GET /static/factory/56f78dbec2b911e7b62c00163e00039a.jpg HTTP/1.1" 200 56961
+[11/Nov/2017 01:00:08] "GET /static/factory/52716cd8c2b911e788e600163e00039a.jpg HTTP/1.1" 200 5417
+[11/Nov/2017 01:00:08] "GET /static/factory/666f8b66c2b911e7baa900163e00039a.jpg HTTP/1.1" 200 6964
+Not Found: /{fact_logo2}
+[11/Nov/2017 01:00:08] "GET /%7Bfact_logo2%7D HTTP/1.1" 404 2680
+[11/Nov/2017 01:00:08] "GET /static/factory/6beb674ac2b911e7a6e400163e00039a.jpg HTTP/1.1" 200 5054
+[11/Nov/2017 01:00:08] "GET /static/factory/72ad7050c2b911e7b79300163e00039a.jpg HTTP/1.1" 200 9621
+[11/Nov/2017 01:00:08] "GET /static/factory/0e78fe5ac2ba11e7922f00163e00039a.jpg HTTP/1.1" 200 5583
+[11/Nov/2017 01:00:08] "GET /static/factory/13c7960ac2ba11e7967a00163e00039a.jpg HTTP/1.1" 200 10072
+[11/Nov/2017 01:00:08] "GET /static/factory/1df73694c2ba11e79e1400163e00039a.jpg HTTP/1.1" 200 38779
+[11/Nov/2017 01:00:08] "GET /static/factory/26e0b91ac2ba11e7bf6e00163e00039a.jpg HTTP/1.1" 200 6949
+[11/Nov/2017 01:00:08] "GET /static/factory/31ea3d7cc2ba11e78fe100163e00039a.jpg HTTP/1.1" 200 7544
+[11/Nov/2017 01:00:08] "GET /static/factory/79d7bc1ec2b911e7a30500163e00039a.jpg HTTP/1.1" 200 25115
+[11/Nov/2017 01:00:08] "GET /static/factory/7f46e8a0c2b911e78f8300163e00039a.jpg HTTP/1.1" 200 14112
+[11/Nov/2017 01:00:08] "GET /static/factory/85138982c2b911e7a90e00163e00039a.jpg HTTP/1.1" 200 16280
+[11/Nov/2017 01:00:08] "GET /static/factory/ed55e616c2b911e7bc9200163e00039a.jpg HTTP/1.1" 200 18385
+[11/Nov/2017 01:00:08] "GET /static/factory/8a95f6cec2b911e7a05600163e00039a.jpg HTTP/1.1" 200 6058
+[11/Nov/2017 01:00:08] "GET /static/factory/fd6a26f2c2b911e7811e00163e00039a.jpg HTTP/1.1" 200 38649
+[11/Nov/2017 01:00:08] "GET /static/factory/f2759b50c2b911e7bfa900163e00039a.jpg HTTP/1.1" 200 22578
+[11/Nov/2017 01:00:08] "GET /static/factory/023e7570c2ba11e7a8c600163e00039a.jpg HTTP/1.1" 200 7367
+[11/Nov/2017 01:00:08] "GET /static/factory/f7c76066c2b911e7baf600163e00039a.jpg HTTP/1.1" 200 18085
+[11/Nov/2017 01:00:08] "GET /static/factory/072578b8c2ba11e7b9d700163e00039a.jpg HTTP/1.1" 200 7230
+[11/Nov/2017 01:00:11] "GET /vote_number.html HTTP/1.1" 200 4636
+[11/Nov/2017 01:00:11] "GET /static/js/login.js HTTP/1.1" 404 1756
+Invalid HTTP_HOST header: '59.110.246.207:8081'. You may need to add u'59.110.246.207' to ALLOWED_HOSTS.
+[11/Nov/2017 01:10:21] "GET / HTTP/1.1" 400 59959
+Invalid HTTP_HOST header: u'iZ2zegjb9m90kynf04ocmcZ:8081'. You may need to add u'iz2zegjb9m90kynf04ocmcz' to ALLOWED_HOSTS.
+[11/Nov/2017 02:58:47] "CONNECT 115.159.231.141:80 HTTP/1.1" 400 60497
+Invalid HTTP_HOST header: '58dun.58.com'. You may need to add u'58dun.58.com' to ALLOWED_HOSTS.
+[11/Nov/2017 02:58:48] "GET HTTP://58dun.58.com/monum.html HTTP/1.1" 400 60922
+[11/Nov/2017 03:00:29] code 400, message Bad request syntax ('\x04\x01\x00Ps\x9f\xe7\x8d988052\x00')
+Traceback (most recent call last):
+  File "/usr/lib64/python2.7/logging/__init__.py", line 851, in emit
+    msg = self.format(record)
+  File "/usr/lib64/python2.7/logging/__init__.py", line 724, in format
+    return fmt.format(record)
+  File "/usr/lib64/python2.7/site-packages/django/utils/log.py", line 192, in format
+    return super(ServerFormatter, self).format(record)
+  File "/usr/lib64/python2.7/logging/__init__.py", line 467, in format
+    s = self._fmt % record.__dict__
+UnicodeDecodeError: 'ascii' codec can't decode byte 0x9f in position 6: ordinal not in range(128)
+Logged from file basehttp.py, line 124
+[11/Nov/2017 03:02:09] code 400, message Bad request syntax ('\x05\x01\x00')
+[11/Nov/2017 03:02:09] " " 400 -
+Invalid HTTP_HOST header: u'iZ2zegjb9m90kynf04ocmcZ:8081'. You may need to add u'iz2zegjb9m90kynf04ocmcz' to ALLOWED_HOSTS.
+[11/Nov/2017 03:44:26] "GET / HTTP/1.0" 400 59705

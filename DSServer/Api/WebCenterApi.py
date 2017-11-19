@@ -6,13 +6,19 @@ from django.http import  HttpResponse
 import json,uuid,time,base64,re
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
-import qrcode
+import qrcode,urllib2
 from HsShareData import *
 
 from DSServer.models import *
 
 from django.template import Template, Context
 
+appID = "wx6d45e5e461e41f06"
+appsecret = "726c202ca673beff13e4bc7dd0d5d01a"
+access_token = None
+ticket = None
+
+# http://blog.csdn.net/xiaoguo321/article/details/51483914
 class WebCenterApi(object):
     @staticmethod
     @csrf_exempt
@@ -50,6 +56,8 @@ class WebCenterApi(object):
             return WebCenterApi.Query_UserInfo(req)
         elif command == "Modi_VCount".upper():
             return WebCenterApi.Modi_VCount(req)
+        elif command == "Query_Vote_Number".upper():
+            return WebCenterApi.Query_Vote_Number(req)
 
     @staticmethod
     def Query_BaseInfo(request):
@@ -257,8 +265,12 @@ class WebCenterApi(object):
             file.close()
 
 
+        voteNew = DrVote()
+        voteNew.fcode = newFactory.code
+        voteNew.votecount = 0
         commitDataList=[]
         commitDataList.append(CommitData(newFactory, 0))
+        commitDataList.append(CommitData(voteNew, 0))
         # 事务提交
         try:
             result = commitCustomDataByTranslate(commitDataList)
@@ -316,6 +328,40 @@ class WebCenterApi(object):
 
         loginResut = json.dumps({"ErrorInfo": "操作成功", "ErrorId": 200, "Result":None })
 
+        return HttpResponse(loginResut)
+
+    @staticmethod
+    def Query_Vote_Number(request):
+        pageIndex = int(request.GET.get('pageindex'))
+        pageSize = int(request.GET.get('pagesize'))
+        start = int(request.GET.get('start'))
+
+        print request.GET
+
+        # 查出前6名
+        results = DrVote.objects.order_by('-votecount').all()
+        rtnResult = []
+        for index, one in enumerate(results):
+            if index < start or index - 6 < pageIndex*pageSize:
+                continue
+
+            if (index - 6) >= (pageIndex * pageSize + pageSize):
+                break
+
+            factData = DrFactory.objects.filter(code=one.fcode).first()
+
+            if not factData:
+                continue
+
+            renterDict={}
+            renterDict["number_img"] = "/static/factory/%s.jpg" % factData.logoname
+            renterDict["number_name"] = factData.name
+            renterDict["number"] = index + 1
+            renterDict["number_vote_count"] = one.votecount
+            rtnResult.append(renterDict)
+
+        print  rtnResult
+        loginResut = json.dumps({"ErrorInfo": "操作成功", "ErrorId": 200, "Result": rtnResult})
         return HttpResponse(loginResut)
 
 
@@ -382,8 +428,8 @@ class WebCenterApi(object):
         if len(postDataList['image']) > 0:
             # 图片
             imgdata = base64.b64decode(postDataList['image'])
-
-            file = open(os.path.join(os.path.join(STATIC_ROOT,"factory"),'%s.jpg'% factory.logoname), 'wb')
+            print STATIC_ROOT
+            file = open(os.path.join(os.path.join("/opt/toupiao/DSServer/static","factory"),'%s.jpg'% factory.logoname), 'wb')
             file.write(imgdata)
             file.close()
 
@@ -706,6 +752,84 @@ class WebCenterApi(object):
         renterDict['vote_intro'] = "      " + config.introduce.replace("<br>","\n").replace("&nbsp"," ")
         renterDict['main_logo'] = "/static/%s" % config.logoimage
         return render(request, 'vote_expert.html',renterDict )
+
+    @staticmethod
+    @csrf_exempt
+    def shareToFriend(request):
+        rtnDict = {}
+        import time
+
+        url = request.GET.get('url')
+
+        print "shareToFriend===>",url
+
+        nonceStr = 'Zfdf09i'
+        timesnamp = int(time.time())
+        rtnDict['timeStamp'] = timesnamp
+        rtnDict['nonceStr'] = nonceStr
+        rtnDict['signature'] = WebCenterApi.getSignature(appID,appsecret,url,timesnamp,nonceStr)
+        rtnDict['appId'] = 'wx6d45e5e461e41f06'
+
+        loginResut = json.dumps(rtnDict)
+        return HttpResponse(loginResut)
+
+    @staticmethod
+    def getAccessToken(appid,appsecret):
+        global access_token
+        # WEIXIN_JSAPI_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi";
+        # access_token = mapToken.get("accessToken")
+        if access_token == None:
+            url = "https://api.weixin.qq.com" + "/cgi-bin/token?grant_type=client_credential&appid="+appid+"&secret="+appsecret;
+
+            # menuJsonStr = HttpUtil.get(url);
+            # 定义字典
+            try:
+                req = urllib2.Request(url)
+                res = urllib2.urlopen(req)
+                res = res.read()
+
+                print '===getAccessToken===>',res
+                resDict = json.loads(res)
+                access_token = resDict['access_token']
+            except :
+                access_token = None
+
+        return access_token
+
+    @staticmethod
+    def getJsapiTicket(accessToken):
+        global ticket
+        if ticket == None:
+            print "===>",access_token
+            url = "https://api.weixin.qq.com" + "/cgi-bin/ticket/getticket?access_token="+accessToken+"&type=jsapi";
+            # menuJsonStr = HttpUtil.get(url);
+            # type = new TypeToken < Map < String, Object >> () {}.getType();
+            #  Map < Object, Object > ticketInfo = new Gson().fromJson(menuJsonStr, type);
+            try:
+                req = urllib2.Request(url)
+                res = urllib2.urlopen(req)
+                res = res.read()
+
+                print '===getJsapiTicket===>', res
+
+                resJson = json.loads(res)
+                ticket = resJson['ticket']
+            except:
+                ticket = None
+
+        print 'tickes====',ticket
+        return ticket
+
+    @staticmethod
+    def getSignature(appid,appscret,url,timesnamp,noncestr):
+        accessToken = WebCenterApi.getAccessToken(appid, appscret)
+        jsapi_ticket = WebCenterApi.getJsapiTicket(accessToken)
+        signValue = "jsapi_ticket=" + jsapi_ticket + "&noncestr=" + noncestr + "&timestamp=" + str(timesnamp) + "&url=" + url
+
+        import hashlib
+        signature = hashlib.sha1(signValue).hexdigest()
+        return signature
+    pass
 
     @staticmethod
     @csrf_exempt
