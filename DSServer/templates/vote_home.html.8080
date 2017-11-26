@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+
+    </style>
+
+    <link rel="shortcut icon" href="/static/Icon/default.png" >
+
+    <style>
+        @import url('/static/css/vote_home.css');
+    </style>
+
+{#<div id="shareImage" style="display: none;">#}
+{#   	<img src="/static/Images/weblog.png" />#}
+{#</div>#}
+</head>
+
+<body style="overflow-x: hidden;text-align: center;min-height: 1000px;width: 100%;background-image: url('/static/Images/back_img.jpg');">
+    <div id="content">
+    <script src="/static/js/jquery.min.js"></script>
+        <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/static/js/vote_home.js"> </script>
+        <script src="/static/js/md5.js"></script>
+        <script src="/static/js/jquery.blockUI.js"> </script>
+    <script src="/static/js/cookie.js"> </script>
+
+        <script type="text/javascript">
+
+            $(function(){
+              /***用户点击分享到微信圈后加载接口接口****------***/
+                var url=window.location.href.split('#')[0];
+                 url = url.replace(/&/g, '%26');
+                console.log("url:"+url);
+                    $.ajax({
+                    url: "http://www.chuweinews.com:8080/shareToFriend/?url="+url,
+                    type: "POST",
+                    async:true,
+                    cache: false,
+                    dataType: "json",
+                    success: function(data){
+                        wx.config({
+                          debug: false,
+                          appId:data.appId,
+                          timestamp:data.timeStamp,
+                          nonceStr:data.nonceStr,
+                          signature:data.signature,
+                          jsApiList: [
+                              'checkJsApi',
+                              'onMenuShareTimeline',
+                              'onMenuShareAppMessage'
+                          ]
+                      });
+
+                      wx.ready(function(){
+                         //wx.hideOptionMenu();/***隐藏分享菜单****/
+                         wx.checkJsApi({
+                          jsApiList: [
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage'
+                          ],
+                          success: function (res) {
+                            //alert(res.errMsg);
+                          }
+                        });
+
+                        wx.onMenuShareAppMessage({
+                              title: '十大厨电品牌投票',
+                              desc: '2017年度第五届10大厨卫电器品牌投票，由中国厨卫行业平台联合蒂壤大数据中心联合发起，本次评选将综合品牌市场占有率得分、网络投票得分、品牌美誉度得分、质量品质得分',
+                              link: 'http://www.chuweinews.com:8080',
+                              imgUrl: 'http://www.chuweinews.com:8080/static/Images/weblog.png',
+                              trigger: function (res) {
+                                //alert('用户点击发送给朋友');
+                              },
+                              success: function (res) {
+                                alert('感谢您的分享～～');
+                                //分享之后增加游戏次数
+                              },
+                              cancel: function (res) {
+                                //alert('已取消');
+                              },
+                              fail: function (res) {
+                                alert(res.errMsg);
+                              }
+                           });
+
+                          // 2.2 监听“分享到朋友圈”按钮点击、自定义分享内容及分享结果接口
+                          wx.onMenuShareTimeline({
+                              title: '十大厨电品牌投票',
+                              desc: '2017年度第五届10大厨卫电器品牌投票，由中国厨卫行业平台联合蒂壤大数据中心联合发起，本次评选将综合品牌市场占有率得分、网络投票得分、品牌美誉度得分、质量品质得分',
+                              link: 'http://www.chuweinews.com:8080',
+                              imgUrl: 'http://www.chuweinews.com:8080/static/Images/weblog.png',
+                              trigger: function (res) {
+                                //alert('用户点击分享到朋友圈');
+                              },
+                              success: function (res) {
+                                alert('感谢您的分享～～');
+                              },
+                              cancel: function (res) {
+                                //alert('已取消');
+                              },
+                              fail: function (res) {
+                                alert(res.errMsg);
+                              }
+                        });
+
+                        wx.error(function (res) {
+                               alert(res.errMsg);
+                           });
+                       });
+                    },
+                    error: function() {
+                        alert('ajax request failed!!!!');
+                        return;
+                    }
+                });
+              });
+
+        </script>
+            <img src='http://www.chuweinews.com:8080/static/Images/weblog.png' style='margin:0 auto;display:none;' />
+
+            {# 最顶端图标 #}
+            <div style="width: 100% ; height: 330px">
+                <img src="{{ main_logo }}" style="height: 330px;width: 750px">
+            </div>
+
+
+            <div style="width: 80%;background-color: #fff;margin: 0 auto;border-radius:0.7cm;text-align: center">
+                {#  活动简介  #}
+                <div class="vote_introduce">活动简介</div>
+                <div class="introduce">
+                        {{ vote_intro }}
+                </div>
+            </div>
+
+            <div style="width: 80%;background-color: #fff;margin: 0 auto;margin-top: 30px;text-align: center;height: 320px;border-radius:0.7cm">
+                {#  活动简介  #}
+                <div style="margin-top: 20px;font-size: 2cm;width: 65%;text-align: left;float: left">
+                    <p class="org_info">主办单位：<a class="org_detail">{{ZhuBanOrg}}</a></p>
+                    <p class="org_info">承办单位：<a class="org_detail">{{ChengBanOrg}}</a></p>
+                    <p class="org_info">支持媒体：<a class="org_detail">{{ZhiChiOrg}}</a></p>
+                    <p class="org_info">协助单位：<a class="org_detail">{{XieZhuOrg}}</a></p>
+                </div>
+                <div style="margin-top: 20px;width: 30%;text-align: right;float: right;text-align: center;margin-right: 20px">
+                    <img src="/static/Images/hdj.png" style="width: 6cm;height: 6cm">
+                    <div style="font-size: 0.8cm">长按二维码关注</div>
+                </div>
+
+            </div>
+
+            {#   广告   #}
+            <div style="margin-top: 30px">
+                <img src="/static/Images/ad1.png" style="width: 690px;height: 50px">
+            </div>
+
+            {#   搜索   #}
+            <div style="width: 80%;background-color: #fff;margin: 0 auto;margin-top: 30px;text-align: center;height: 120px;border-radius:0.7cm">
+                <INPUT id="searchContext" type="text" placeholder="请输入搜索内容">
+                <button id="searchButton" onmouseover="this.style.backgroundColor='#98AFC7';this.style.color='white'" onmouseout="this.style.backgroundColor='';this.style.color='#666666'">搜索</button>
+            </div>
+
+
+
+
+            {#     品牌列表     #}
+            <div id="pinPaiList">
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {#   协办品牌     #}
+        <div style="width: 590px;height: 140px;margin-top: 100px;margin-bottom: 160px">
+            <img  style="width: 100%;height: 1px;margin-bottom: 160px;margin-top: 200px;background-color: transparent">
+        </div>
+
+    </div>
+
+        <div class="nav">
+            <div style="width: 49%;background-color: #CA1701;height: 150px;float: left;" onclick="window.open('vote_introduce.html','_self')">
+                <img src="/static/Images/vote_info.png" style="width: 152px;height: 100px;margin-top: 20px">
+            </div>
+            <div style="width: 49%;background-color: #CA1701;height: 150px;float: left;margin-left: 0.3%" onclick="window.open('vote_number.html','_self')">
+                <img src="/static/Images/vote_number.png" style="width: 142px;height: 100px;margin-top: 20px">
+            </div>
+{#            <div style="width: 33%;background-color: #CA1701;height: 150px;float: right;margin-right: 0.3%" onclick="window.open('vote_expert.html','_self')">#}
+{#                <img src="/static/Images/vote_expert.png" style="width: 152px;height: 100px;margin-top: 20px">#}
+{#            </div>#}
+        </div>
+</body>
+</html>

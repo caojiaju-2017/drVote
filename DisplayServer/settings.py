@@ -30,7 +30,7 @@ DEBUG = True
 
 APPEND_SLASH=False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.2.119','192.168.1.104','115.159.224.102','192.168.1.209','101.200.187.182','192.168.1.101' ,'www.sjsfu.com','www.chuweinews.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.2.119','192.168.1.104','115.159.224.102','192.168.1.209','101.200.187.182','www.sjsfu.com','www.chuweinews.com']
 
 
 # Application definition
@@ -83,8 +83,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'vote',
         'USER': 'root',
-        'PASSWORD': '123456',
-        'HOST':'101.201.121.175',
+        'PASSWORD': 'Accc-123654',
+        'HOST':'101.200.187.182',
         'PORT': '3306',
     }
 }

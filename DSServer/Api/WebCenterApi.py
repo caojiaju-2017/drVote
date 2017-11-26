@@ -8,7 +8,7 @@ from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
 import qrcode,urllib2
 from HsShareData import *
-
+from django.db.models import F
 from DSServer.models import *
 
 from django.template import Template, Context
@@ -18,7 +18,54 @@ appsecret = "726c202ca673beff13e4bc7dd0d5d01a"
 access_token = None
 ticket = None
 
+ipList = []
+ipList.append('59.56.94.156')
+ipList.append('110.183.55.122')
+ipList.append('117.80.164.123')
+ipList.append('183.202.173.49')
+ipList.append('223.81.131.153')
+ipList.append('122.137.254.79')
+ipList.append('117.40.115.254')
+ipList.append('122.137.254.233')
+
+
 # http://blog.csdn.net/xiaoguo321/article/details/51483914
+rtnDictGlobal={}
+
+LastDateTime = None
+Config = None
+
+if HsShareData.lockFactorys.acquire():
+    if len(HsShareData.Factorys) <= 0:
+        tests = DrFactory.objects.all()
+        for one in tests:
+            HsShareData.Factorys.append(one)
+    HsShareData.lockFactorys.release()
+
+# if HsShareData.lockVotes.acquire():
+#     if len(HsShareData.Votes) <= 0:
+#         temps = DrVote.objects.all()
+#
+#         for one in temps:
+#             HsShareData.Votes.append(one)
+#     HsShareData.lockVotes.release()
+
+if HsShareData.lockVoteRecords.acquire():
+    if len(HsShareData.VoteRecords) <= 0:
+        tempsT = DrVoteRecord.objects.all()
+
+        for one in tempsT:
+            HsShareData.VoteRecords.append(one)
+    HsShareData.lockVoteRecords.release()
+
+Config = DrConfig.objects.first()
+
+IPInfo={}
+LoopCountInfo={}
+IPInfo22={}
+
+first6Number=[]
+LastTimes = None
 class WebCenterApi(object):
     @staticmethod
     @csrf_exempt
@@ -55,17 +102,30 @@ class WebCenterApi(object):
         elif command == "Query_UserInfo".upper():
             return WebCenterApi.Query_UserInfo(req)
         elif command == "Modi_VCount".upper():
-            return WebCenterApi.Modi_VCount(req)
+            return WebCenterApi.Modi_VCount1(req)
         elif command == "Query_Vote_Number".upper():
             return WebCenterApi.Query_Vote_Number(req)
-
+        elif command == "Query_AccessCount".upper():
+            return WebCenterApi.Query_AccessCount(req)
     @staticmethod
     def Query_BaseInfo(request):
-        config = DrConfig.objects.first()
+        global Config
+        ipreques = request.META['REMOTE_ADDR']
+        if ipreques in ipList:
+            loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 9, "Result":0 })
+            return HttpResponse(loginResut)
+
+        config = None
+        if not Config:
+            Config = DrConfig.objects.first()
+            config = Config
+        else:
+            config = Config
 
         if not config:
             loginResut = json.dumps({"ErrorInfo": "投票全局配置数据未设置", "ErrorId": 10002, "Result": ""})
             return HttpResponse(loginResut)
+
 
 
         rtnInfo={}
@@ -90,9 +150,45 @@ class WebCenterApi(object):
 
     @staticmethod
     def Query_UserInfo(request):
+        global IPInfo
+        global ipList
         cookie = request.GET.get('cookie')
-        print '====',cookie
+        ipreques = request.META['REMOTE_ADDR']
+        # print '====',cookie
+        # print '==客户IP==', real_ip
+        if ipreques in ipList:
+            loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 9, "Result":0 })
+            return HttpResponse(loginResut)
+        try:
+            if HsShareData.lockVoteRecords.acquire():
+                if not IPInfo.has_key(ipreques):
+                    IPInfo[ipreques] = datetime.datetime.now()
+                    LoopCountInfo[ipreques] = 1
+                else:
+                    print 'have ip info'
+                    dateLast = IPInfo[ipreques]
+                    nowDate = datetime.datetime.now()
+                    loopCount = LoopCountInfo[ipreques]
+                    if (nowDate - dateLast).seconds < 10*60 and loopCount > 100:
+                        print 'ip not timeout'
+                        # 如果一分钟超过100个，则加入黑名单
+                        if (nowDate - dateLast).seconds < 1 * 60:
+                            ipList.append(ipreques)
+
+                        HsShareData.lockVoteRecords.release()
+                        loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 1009, "Result":0 })
+                        return HttpResponse(loginResut)
+                    elif (nowDate - dateLast).seconds >= 10*60 :
+                        IPInfo[ipreques] = datetime.datetime.now()
+                        LoopCountInfo[ipreques] = 1
+                    else:
+                        LoopCountInfo[ipreques] = LoopCountInfo[ipreques] + 1
+                HsShareData.lockVoteRecords.release()
+        except:
+            HsShareData.lockVoteRecords.release()
+
         records = DrVoteRecord.objects.filter(ucode=cookie)
+
 
         retFlag = 1
 
@@ -105,17 +201,73 @@ class WebCenterApi(object):
                 retFlag = 0
 
 
+        # 计算用户操作记录
+        # userLastRecord = DrOpenRecord.objects.filter(fcode=cookie).order_by('opentime').last()
+        # newRecord = None
+        # newRecord = DrOpenRecord()
+        # newRecord.fcode = cookie
+        # newRecord.opentime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        # newRecord.ipaddress = real_ip
+        newRecord = None
+        # # time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        # if userLastRecord:
+        #     opertTime = userLastRecord.opentime
+        #     ipaddress = userLastRecord.ipaddress
+        #     if ipaddress == real_ip:
+        #         d1=datetime.datetime.strptime(opertTime, "%Y-%m-%d %H:%M:%S")
+        #         d2 = datetime.datetime.now()
+        #         seconds = (d2 - d1).seconds
+        #
+        #         if seconds > 2*60:
+        #             newRecord = DrOpenRecord()
+        #             newRecord.fcode = cookie
+        #             newRecord.opentime = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        #             newRecord.ipaddress = real_ip
+        #     else:
+        #         newRecord = DrOpenRecord()
+        #         newRecord.fcode = cookie
+        #         newRecord.opentime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        #         newRecord.ipaddress = real_ip
+        # else:
+        #     newRecord = DrOpenRecord()
+        #     newRecord.fcode = cookie
+        #     newRecord.opentime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        #     newRecord.ipaddress = real_ip
+
+        # if newRecord:
+        #     commitDataList = []
+        #     commitDataList.append(CommitData(newRecord, 0))
+        #     # 事务提交
+        #     try:
+        #         result = commitCustomDataByTranslate(commitDataList)
+        #
+        #         if not result:
+        #             print "数据库操作失败"
+        #     except Exception, ex:
+        #         print "数据库操作失败"
 
         loginResut = json.dumps({"ErrorInfo": "操作成功", "ErrorId": 200, "Result": retFlag})
         return HttpResponse(loginResut)
 
     @staticmethod
     def Set_BaseInfo(request):
+        global Config
+        ipreques = request.META['REMOTE_ADDR']
+        if ipreques in ipList:
+            loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 9, "Result":0 })
+            return HttpResponse(loginResut)
+
         # 提取post数据
         postDataList = {}
         postDataList = getPostData(request)
 
-        config = DrConfig.objects.first()
+        config = None
+        if not Config:
+            Config = DrConfig.objects.first()
+            config = Config
+        else:
+            config = Config
+
         if not config:
             config = DrConfig()
 
@@ -174,20 +326,71 @@ class WebCenterApi(object):
 
     @staticmethod
     def Query_Factory(request):
+        global IPInfo
+        global ipList
+        # print 'Factorys.Count----------------',len(HsShareData.Factorys)
+        # print 'Votes.Count----------------', len(HsShareData.Votes)
+        # print 'VoteRecords.Count----------------', len(HsShareData.VoteRecords)
+
         pageIndex = int(request.GET.get('pageindex'))
         pageSize = int(request.GET.get('pagesize'))
         fliterStr = request.GET.get('fliter')
 
-        factorys = None
+        # d91202a2cd0911e79a1900163e2ea800
+
+        ipreques = request.META['REMOTE_ADDR']
+
+        if ipreques in ipList:
+            loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 9, "Result":0 })
+            return HttpResponse(loginResut)
+
+        try:
+            if HsShareData.lockVoteRecords.acquire():
+                if not IPInfo.has_key(ipreques):
+                    IPInfo[ipreques] = datetime.datetime.now()
+                    LoopCountInfo[ipreques] = 1
+                else:
+                    print 'have ip info'
+                    dateLast = IPInfo[ipreques]
+                    nowDate = datetime.datetime.now()
+                    loopCount = LoopCountInfo[ipreques]
+                    if (nowDate - dateLast).seconds < 10*60 and loopCount > 400:
+                        print 'ip not timeout'
+                        # 如果一分钟超过100个，则加入黑名单
+                        if (nowDate - dateLast).seconds < 1 * 60:
+                            ipList.append(ipreques)
+
+                        HsShareData.lockVoteRecords.release()
+                        loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 1009, "Result":0 })
+                        return HttpResponse(loginResut)
+                    elif (nowDate - dateLast).seconds >= 10*60 :
+                        IPInfo[ipreques] = datetime.datetime.now()
+                        LoopCountInfo[ipreques] = 1
+                    else:
+                        LoopCountInfo[ipreques] = LoopCountInfo[ipreques] + 1
+                HsShareData.lockVoteRecords.release()
+        except:
+            HsShareData.lockVoteRecords.release()
+
+        factorys = []
+        # factorys = DrFactory.objects.all()
         if fliterStr and len(fliterStr) > 0:
-            factorys= DrFactory.objects.filter(name__contains=fliterStr)
+            for one in HsShareData.Factorys:
+                if fliterStr in one.name:
+                    factorys.append(one)
         else:
-            factorys = DrFactory.objects.all()
+            # factorys = DrFactory.objects.all()
+            factorys = HsShareData.Factorys
 
         rtnDict={}
         rtnResult = []
 
         votes = DrVote.objects.all()
+        # if HsShareData.lockVotes.acquire():
+        #     votes = HsShareData.Votes
+        #     votes = sorted(votes, key=lambda student: student.votecount, reverse=True)
+        #     HsShareData.lockVotes.release()
+
         for index, one in enumerate(factorys):
             if index < pageIndex*pageSize:
                 continue
@@ -207,6 +410,7 @@ class WebCenterApi(object):
             for oneVote in votes:
                 if oneVote.fcode == one.code:
                     oneRecord['voteCount'] = oneVote.votecount
+                    break
 
             rtnResult.append(oneRecord)
 
@@ -331,15 +535,64 @@ class WebCenterApi(object):
         return HttpResponse(loginResut)
 
     @staticmethod
+    def Query_AccessCount(request):
+        recordCount = DrOpenRecord.objects.all().count()
+        loginResut = json.dumps({"ErrorInfo": "操作成功", "ErrorId": 200, "Result": recordCount})
+        return HttpResponse(loginResut)
+        pass
+    @staticmethod
     def Query_Vote_Number(request):
+        global IPInfo
+        global ipList
+
         pageIndex = int(request.GET.get('pageindex'))
         pageSize = int(request.GET.get('pagesize'))
         start = int(request.GET.get('start'))
+
+        ipreques = request.META['REMOTE_ADDR']
+        if ipreques in ipList:
+            loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 9, "Result":0 })
+            return HttpResponse(loginResut)
+
+        try:
+            if HsShareData.lockVoteRecords.acquire():
+                if not IPInfo.has_key(ipreques):
+                    IPInfo[ipreques] = datetime.datetime.now()
+                    LoopCountInfo[ipreques] = 1
+                else:
+                    print 'have ip info'
+                    dateLast = IPInfo[ipreques]
+                    nowDate = datetime.datetime.now()
+                    loopCount = LoopCountInfo[ipreques]
+                    if (nowDate - dateLast).seconds < 10*60 and loopCount > 100:
+                        print 'ip not timeout'
+                        # 如果一分钟超过100个，则加入黑名单
+                        if (nowDate - dateLast).seconds < 1 * 60:
+                            ipList.append(ipreques)
+
+                        HsShareData.lockVoteRecords.release()
+                        loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 1009, "Result":0 })
+                        return HttpResponse(loginResut)
+                    elif (nowDate - dateLast).seconds >= 10*60 :
+                        IPInfo[ipreques] = datetime.datetime.now()
+                        LoopCountInfo[ipreques] = 1
+                    else:
+                        LoopCountInfo[ipreques] = LoopCountInfo[ipreques] + 1
+                HsShareData.lockVoteRecords.release()
+        except:
+            HsShareData.lockVoteRecords.release()
 
         print request.GET
 
         # 查出前6名
         results = DrVote.objects.order_by('-votecount').all()
+        #if HsShareData.lockVotes.acquire():
+        #    results = HsShareData.Votes
+        #    results = sorted(results, key=lambda student: student.votecount,reverse=True)
+        #    # results = sorted(results, key=attrgetter('grade'), reverse=True)
+        #    HsShareData.lockVotes.release()
+
+
         rtnResult = []
         for index, one in enumerate(results):
             if index < start or index - 6 < pageIndex*pageSize:
@@ -348,7 +601,12 @@ class WebCenterApi(object):
             if (index - 6) >= (pageIndex * pageSize + pageSize):
                 break
 
-            factData = DrFactory.objects.filter(code=one.fcode).first()
+            factData = None #DrFactory.objects.filter(code=one.fcode).first()
+
+            for indexA,oneT in enumerate(HsShareData.Factorys):
+                if oneT.code == one.fcode:
+                    factData = oneT
+                    break
 
             if not factData:
                 continue
@@ -374,34 +632,46 @@ class WebCenterApi(object):
         code = postDataList['code']
         vcount = int(postDataList['vcount'])
 
-        facts = DrVote.objects.filter(fcode=code)
+        # facts = DrVote.objects.filter(fcode=code)
         factoryObject = None
-        if len(facts) > 1:
-            loginResut = json.dumps({"ErrorInfo": "当前厂商数据异常", "ErrorId": 10001, "Result": None})
-            return HttpResponse(loginResut)
-        elif len(facts) == 1:
-            factoryObject = facts[0]
-        else:
-            factoryObject = DrVote()
-            factoryObject.fcode = code
-            factoryObject.votecount = 0
+        findIndex = -1
+        if HsShareData.lockVotes.acquire():
+            HsShareData.Votes = sorted(HsShareData.Votes, key=lambda student: student.votecount, reverse=True)
+            for index,one in enumerate(HsShareData.Votes):
+                if one.fcode == code:
+                    factoryObject = one
+                    findIndex = index
+                    break
 
-        factoryObject.votecount = vcount
-        commitDataList = []
-        commitDataList.append(CommitData(factoryObject, 0))
-        # 事务提交
-        try:
-            result = commitCustomDataByTranslate(commitDataList)
+            if not factoryObject :
+                factoryObject = DrVote()
+                factoryObject.fcode = code
+                factoryObject.votecount = 0
 
-            if not result:
+            factoryObject.votecount = vcount
+            commitDataList = []
+            commitDataList.append(CommitData(factoryObject, 0))
+            # 事务提交
+            try:
+                result = commitCustomDataByTranslate(commitDataList)
+
+                if not result:
+                    HsShareData.lockVotes.release()
+                    loginResut = json.dumps({"ErrorInfo": "数据库操作失败", "ErrorId": 99999, "Result": None})
+                    return HttpResponse(loginResut)
+
+                if findIndex < 0:
+                    HsShareData.Votes.append(factoryObject)
+                else:
+                    HsShareData.Votes[findIndex] = factoryObject
+
+                HsShareData.lockVotes.release()
+            except Exception, ex:
+                HsShareData.lockVotes.release()
                 loginResut = json.dumps({"ErrorInfo": "数据库操作失败", "ErrorId": 99999, "Result": None})
                 return HttpResponse(loginResut)
-        except Exception, ex:
-            loginResut = json.dumps({"ErrorInfo": "数据库操作失败", "ErrorId": 99999, "Result": None})
-            return HttpResponse(loginResut)
 
         loginResut = json.dumps({"ErrorInfo": "操作成功", "ErrorId": 200, "Result": None})
-
         return HttpResponse(loginResut)
 
     @staticmethod
@@ -453,19 +723,66 @@ class WebCenterApi(object):
 
     @staticmethod
     def Vote_Voting(request):
+        global IPInfo
+        global ipList
         # 提取post数据
         postDataList = {}
         postDataList = getPostData(request)
 
         ucode = postDataList['ucode']
         fcode = postDataList['fcode']
+        ipreques = request.META['REMOTE_ADDR']
 
+
+        if ipreques in ipList:
+            loginResut = json.dumps({"ErrorInfo": "", "ErrorId": 9, "Result":0 })
+            return HttpResponse(loginResut)
+
+        if fcode == "dd33cb24ccfd11e7a7de00163e2ea800":
+            loginResut = json.dumps({"ErrorInfo": "技术故障，请稍后操作", "ErrorId": 1009, "Result":0 })
+            return HttpResponse(loginResut)
+        print ipreques
+
+        try:
+            if HsShareData.lockVoteRecords.acquire():
+                if not IPInfo.has_key(ipreques):
+                    IPInfo[ipreques] = datetime.datetime.now()
+                    LoopCountInfo[ipreques] = 1
+                else:
+                    print 'have ip info'
+                    dateLast = IPInfo[ipreques]
+                    nowDate = datetime.datetime.now()
+                    loopCount = LoopCountInfo[ipreques]
+                    if (nowDate - dateLast).seconds < 10*60 and loopCount > 100:
+                        print 'ip not timeout'
+                        # 如果一分钟超过100个，则加入黑名单
+                        if (nowDate - dateLast).seconds < 1 * 60:
+                            ipList.append(ipreques)
+
+                        HsShareData.lockVoteRecords.release()
+                        loginResut = json.dumps({"ErrorInfo": "您的投票异常，同一IP投票太频繁", "ErrorId": 1009, "Result":0 })
+                        return HttpResponse(loginResut)
+                    elif (nowDate - dateLast).seconds >= 10*60 :
+                        IPInfo[ipreques] = datetime.datetime.now()
+                        LoopCountInfo[ipreques] = 1
+                    else:
+                        LoopCountInfo[ipreques] = LoopCountInfo[ipreques] + 1
+
+
+
+                HsShareData.lockVoteRecords.release()
+        except:
+            HsShareData.lockVoteRecords.release()
         #
-        userRecords = DrVoteRecord.objects.filter(ucode=ucode)
-        updateRecord = None
-        if len(userRecords) > 0:
-            updateRecord = userRecords[0]
-        else:
+        # userRecords = DrVoteRecord.objects.filter(ucode=ucode)
+        updateRecord = DrVoteRecord.objects.filter(ucode=ucode).first()
+        # updateRecord = None
+        for index ,oneRecord in enumerate(HsShareData.VoteRecords):
+            if oneRecord.ucode == ucode:
+                updateRecord = oneRecord
+                break
+
+        if not updateRecord:
             updateRecord = DrVoteRecord()
 
         userIp = None
@@ -479,33 +796,27 @@ class WebCenterApi(object):
         updateRecord.voteip = userIp
 
         # 累加厂商数据
-        voteRecords = DrVote.objects.filter(fcode=fcode)
-        voteRecord = None
-        if len(voteRecords) > 0:
-            voteRecord = voteRecords[0]
-        else:
+        voteRecord = DrVote.objects.filter(fcode=fcode).first()
+        if not voteRecord:
             voteRecord = DrVote()
             voteRecord.votecount = 0
+            voteRecord.fcode = fcode
 
-        voteRecord.fcode = fcode
-        voteRecord.votecount = voteRecord.votecount + 1
-
+        count = voteRecord.votecount
+        voteRecord.votecount = F('votecount') + 1
+        voteRecord.save()
         commitDataList = []
         commitDataList.append(CommitData(updateRecord, 0))
         commitDataList.append(CommitData(voteRecord, 0))
-        # 事务提交
+
+        # # 事务提交
         try:
             result = commitCustomDataByTranslate(commitDataList)
-
-            if not result:
-                loginResut = json.dumps({"ErrorInfo": "数据库操作失败", "ErrorId": 99999, "Result": None})
-                return HttpResponse(loginResut)
         except Exception, ex:
             loginResut = json.dumps({"ErrorInfo": "数据库操作失败", "ErrorId": 99999, "Result": None})
             return HttpResponse(loginResut)
 
-        loginResut = json.dumps({"ErrorInfo": "操作成功", "ErrorId": 200, "Result": voteRecord.votecount})
-
+        loginResut = json.dumps({"ErrorInfo": "操作成功", "ErrorId": 200, "Result": count + 1})
         return HttpResponse(loginResut)
 
     @staticmethod
@@ -694,18 +1005,22 @@ class WebCenterApi(object):
     @staticmethod
     @csrf_exempt
     def goHome(request):
+        global Config
         isMangeFlag = 0
         try:
             isMangeFlag = int(request.GET.get('mangeflag'))
         except:
             pass
         if isMangeFlag != 1 and (not HsShareData.IsDebug)  and not checkMobile(request):
-            url = "http://" + request.META['HTTP_HOST'] + request.META['PATH_INFO'] + request.META['QUERY_STRING']
-            img = qrcode.make(url)
-            img.save(os.path.join(os.path.join(STATIC_ROOT,"Images"),"erweima_img.png"))
-            return render(request, 'vote_notice.html',{"erweima_img":"/static/Images/erweima_img.png"})
+            return HttpResponse("仅能通过手机操作")
 
-        config = DrConfig.objects.first()
+
+        config = None
+        if not Config:
+            Config = DrConfig.objects.first()
+            config = Config
+        else:
+            config = Config
         renterDict = {}
         renterDict['title'] = config.title
         renterDict['vote_intro'] = "      " + config.introduce.replace("<br>","\n").replace("&nbsp"," ")
@@ -721,13 +1036,16 @@ class WebCenterApi(object):
     @staticmethod
     @csrf_exempt
     def openIntroduce(request):
+        global Config
         if not HsShareData.IsDebug  and not checkMobile(request):
-            url = "http://" + request.META['HTTP_HOST'] + request.META['PATH_INFO'] + request.META['QUERY_STRING']
-            img = qrcode.make(url)
-            img.save(os.path.join(os.path.join(STATIC_ROOT,"Images"),"erweima_img.png"))
-            return render(request, 'vote_notice.html',{"erweima_img":"/static/Images/erweima_img.png"})
+            return HttpResponse("仅能通过手机操作")
 
-        config = DrConfig.objects.first()
+        config = None
+        if not Config:
+            Config = DrConfig.objects.first()
+            config = Config
+        else:
+            config = Config
         renterDict = {}
         renterDict['title'] = config.title
         renterDict['vote_intro'] = "      " + config.introduce.replace("<br>","\n").replace("&nbsp"," ")
@@ -740,13 +1058,19 @@ class WebCenterApi(object):
     @staticmethod
     @csrf_exempt
     def openExpet(request):
+        global Config
         if not HsShareData.IsDebug  and not checkMobile(request):
             url = "http://" + request.META['HTTP_HOST'] + request.META['PATH_INFO'] + request.META['QUERY_STRING']
             img = qrcode.make(url)
             img.save(os.path.join(os.path.join(STATIC_ROOT,"Images"),"erweima_img.png"))
             return render(request, 'vote_notice.html',{"erweima_img":"/static/Images/erweima_img.png"})
 
-        config = DrConfig.objects.first()
+        config = None
+        if not Config:
+            Config = DrConfig.objects.first()
+            config = Config
+        else:
+            config = Config
         renterDict = {}
         renterDict['title'] = config.title
         renterDict['vote_intro'] = "      " + config.introduce.replace("<br>","\n").replace("&nbsp"," ")
@@ -756,6 +1080,8 @@ class WebCenterApi(object):
     @staticmethod
     @csrf_exempt
     def shareToFriend(request):
+        global rtnDictGlobal
+        global LastDateTime
         rtnDict = {}
         import time
 
@@ -765,12 +1091,39 @@ class WebCenterApi(object):
 
         nonceStr = 'Zfdf09i'
         timesnamp = int(time.time())
-        rtnDict['timeStamp'] = timesnamp
-        rtnDict['nonceStr'] = nonceStr
-        rtnDict['signature'] = WebCenterApi.getSignature(appID,appsecret,url,timesnamp,nonceStr)
-        rtnDict['appId'] = 'wx6d45e5e461e41f06'
+        time2 = datetime.datetime.now()
+        if rtnDictGlobal.has_key("timeStamp"):
+            print 'not First apply tickets'
+            valueOld = rtnDictGlobal.has_key("timeStamp")
+            time1 = LastDateTime
 
-        loginResut = json.dumps(rtnDict)
+            sepSeconds = (time2 - time1).seconds
+
+            print 'time2 - time1 =======================================> ', sepSeconds
+            if sepSeconds > 3600:
+                rtnDict['timeStamp'] = timesnamp
+                rtnDict['nonceStr'] = nonceStr
+                rtnDict['signature'] = WebCenterApi.getSignature(appID, appsecret, url, timesnamp, nonceStr)
+                rtnDict['appId'] = 'wx6d45e5e461e41f06'
+                # print rtnDictGlobal
+                rtnDictGlobal = rtnDict
+                LastDateTime = time2
+                # print rtnDictGlobal
+                print 'Timeout'
+            else:
+                print 'Not Timeout'
+
+        else:
+            print 'First apply tickets'
+            rtnDict['timeStamp'] = timesnamp
+            rtnDict['nonceStr'] = nonceStr
+            rtnDict['signature'] = WebCenterApi.getSignature(appID, appsecret, url, timesnamp, nonceStr)
+            rtnDict['appId'] = 'wx6d45e5e461e41f06'
+            rtnDictGlobal = rtnDict
+            LastDateTime = time2
+
+        print '=============>',rtnDictGlobal
+        loginResut = json.dumps(rtnDictGlobal)
         return HttpResponse(loginResut)
 
     @staticmethod
@@ -801,7 +1154,11 @@ class WebCenterApi(object):
         global ticket
         if ticket == None:
             print "===>",access_token
-            url = "https://api.weixin.qq.com" + "/cgi-bin/ticket/getticket?access_token="+accessToken+"&type=jsapi";
+            url = None
+            try:
+                url = "https://api.weixin.qq.com" + "/cgi-bin/ticket/getticket?access_token="+accessToken+"&type=jsapi"
+            except:
+                return None
             # menuJsonStr = HttpUtil.get(url);
             # type = new TypeToken < Map < String, Object >> () {}.getType();
             #  Map < Object, Object > ticketInfo = new Gson().fromJson(menuJsonStr, type);
@@ -834,13 +1191,21 @@ class WebCenterApi(object):
     @staticmethod
     @csrf_exempt
     def openVoteNumber(request):
+        global Config
+        global first6Number
+        global LastTimes
         if not HsShareData.IsDebug  and not checkMobile(request):
             url = "http://" + request.META['HTTP_HOST'] + request.META['PATH_INFO'] + request.META['QUERY_STRING']
             img = qrcode.make(url)
             img.save(os.path.join(os.path.join(STATIC_ROOT,"Images"),"erweima_img.png"))
             return render(request, 'vote_notice.html',{"erweima_img":"/static/Images/erweima_img.png"})
 
-        config = DrConfig.objects.first()
+        config = None
+        if not Config:
+            Config = DrConfig.objects.first()
+            config = Config
+        else:
+            config = Config
         renterDict = {}
         renterDict['title'] = config.title
         renterDict['vote_intro'] = "      " + config.introduce.replace("<br>","\n").replace("&nbsp"," ")
@@ -848,10 +1213,21 @@ class WebCenterApi(object):
 
 
         # 查出前6名
+        # if len(first6Number) == 0:
+        #     first6Number = (DrVote.objects.order_by('-votecount').all())[:10]
+        #     LastTimes = datetime.datetime.now()
+        # else:
+        #     nowT = datetime.datetime.now()
+        #     if (nowT - LastTimes).seconds > 5*60:
+        #         first6Number = (DrVote.objects.order_by('-votecount').all())[:10]
         results = (DrVote.objects.order_by('-votecount').all())[:10]
         for index, one in enumerate(results):
             print one.fcode
-            factData = DrFactory.objects.filter(code=one.fcode).first()
+
+            for oneFact in HsShareData.Factorys:
+                if oneFact.code ==one.fcode:
+                    factData = oneFact
+                    break
 
             if not factData:
                 continue

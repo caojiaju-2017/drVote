@@ -11,6 +11,7 @@ var currentPageIndex = 0;
 var currentPageSize = 10;
 var fliterString = "";
 var queryLock = false;
+
 var templateTemp = '<div class="template_flower">' +
     '<div class="factory_class_left" style="visibility: { fact_display1 }">' +
     '<img src="{fact_logo1}" class="fact_log">' +
@@ -49,8 +50,6 @@ $(document).ready(function()
     // 验证用户是否可以投票
     $.apply_permition(userCookie);
 
-    // 查询参与投票的品牌
-    $.query_vote_data();
 
     $(window).scroll(function(){
         var srollPos = $(window).scrollTop();
@@ -96,7 +95,7 @@ $(window).resize(function(){
 $.extend({
     apply_permition: function (uCookie)
     {
-
+        queryLock = true;
         // 提取用户名
         $.get("/api/vote/?Command=Query_UserInfo&cookie=" + uCookie,
             function (data)
@@ -108,8 +107,10 @@ $.extend({
                 if (ErrorId == 200)
                 {
                     isEnable = parseInt(Result);
-                    //alert(isEnable);
                 }
+
+                // 查询参与投票的品牌
+                $.query_vote_data();
 
             },
             "json");//这里返回的类型有：json,html,xml,text
@@ -126,7 +127,7 @@ $.extend({
     {
         queryLock = true;
         var cmdString = $.get_current_query();
-        $.apply_permition(userCookie);
+        // $.apply_permition(userCookie);
         // 提取用户名
         $.get( cmdString,
             function (data)
@@ -316,6 +317,10 @@ $.extend({
                     eval("$(\"#" + fcode + "\").html('得票数：" + Result + "')");
 
                     alert("感谢参与!");
+                }
+                else
+                {
+                    alert(data.ErrorInfo);
                 }
 
 

@@ -17,8 +17,8 @@
 {#   	<img src="/static/Images/weblog.png" />#}
 {#</div>#}
 </head>
-
-<body style="overflow-x: hidden;text-align: center;min-height: 1000px;width: 100%;background-image: url('/static/Images/back_img.jpg');">
+{#background-image: url('/static/Images/back_img.jpg');#}
+<body style="overflow-x: hidden;text-align: center;min-height: 1000px;width: 100%;background-color: #ED3C34">
     <div id="content">
     <script src="/static/js/jquery.min.js"></script>
         <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
@@ -107,12 +107,12 @@
                         });
 
                         wx.error(function (res) {
-                               alert(res.errMsg);
+{#                               alert(res.errMsg);#}
                            });
                        });
                     },
                     error: function() {
-                        alert('ajax request failed!!!!');
+{#                        alert('ajax request failed!!!!');#}
                         return;
                     }
                 });

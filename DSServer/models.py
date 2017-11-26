@@ -75,3 +75,12 @@ class DrConfig(models.Model):
         db_table = 'dr_config'
 
 
+class DrOpenRecord(models.Model):
+    id = models.IntegerField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    fcode = models.CharField(db_column='FCode', max_length=32)  # Field name made lowercase.
+    opentime = models.CharField(db_column='OpenTime', max_length=20)  # Field name made lowercase.
+    ipaddress = models.CharField(db_column='IpAddress', max_length=20)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'dr_openrecord'

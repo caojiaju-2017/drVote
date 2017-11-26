@@ -16,6 +16,15 @@ class HsShareData:
     GuestAccessDict = {}
     GuestMaxAccessCount = 50
 
+    Factorys = []
+    Votes = []
+    VoteRecords = []
+    Config = None
+
+    lockFactorys = threading.Lock()
+    lockVoteRecords = threading.Lock()
+    lockVotes = threading.Lock()
+
     SmsListData = []
 class CommitData(object):
     def __init__(self,dbhandle,type):
